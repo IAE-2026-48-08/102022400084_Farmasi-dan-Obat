@@ -2,16 +2,12 @@
 
 Bagian dari ekosistem **E-Healthcare**, service ini menangani seluruh alur proses bisnis rawat jalan — mulai dari pasien datang, konsultasi dengan dokter, hingga pengambilan obat di farmasi. Dibangun di atas Laravel dengan REST API dan GraphQL sebagai protokol komunikasi antar service.
 
----
-
 ## Fitur
 
 - **REST API** — Endpoint terstruktur untuk 3 service: Data Pasien, Jadwal Dokter, dan Farmasi & Obat
 - **GraphQL** — Query fleksibel dengan Lighthouse, cocok untuk integrasi lintas service
 - **Swagger UI** — Dokumentasi API interaktif, lengkap dengan autentikasi API Key
 - **GraphiQL** — Playground untuk eksplorasi skema GraphQL secara langsung
-
----
 
 ## Stack
 
@@ -23,22 +19,18 @@ Bagian dari ekosistem **E-Healthcare**, service ini menangani seluruh alur prose
 | GraphQL UI | [Laravel GraphiQL](https://github.com/mll-lab/laravel-graphiql) |
 | Database | SQLite |
 
----
-
 ## Prasyarat
 
 - PHP >= 8.3
 - Composer
 - Node.js & NPM
 
----
-
 ## Cara Menjalankan
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/IAE-2026-48-08/102022400084_Melakukan-Rawat-jalan.git
-cd 102022400084_Melakukan-Rawat-jalan
+git clone https://github.com/IAE-2026-48-08/102022400084_Farmasi-dan-Obat.git
+cd 102022400084_Farmasi-dan-Obat
 
 # 2. Install dependencies
 composer install
@@ -57,8 +49,6 @@ composer run dev
 
 Aplikasi akan berjalan di `http://localhost:8000`
 
----
-
 ## Akses Layanan
 
 | Layanan | URL |
@@ -68,8 +58,6 @@ Aplikasi akan berjalan di `http://localhost:8000`
 | GraphiQL Playground | http://localhost:8000/graphiql |
 | GraphQL Endpoint | http://localhost:8000/graphql |
 
----
-
 ## Autentikasi
 
 Semua endpoint REST memerlukan API Key yang dikirim via header:
@@ -78,12 +66,12 @@ Semua endpoint REST memerlukan API Key yang dikirim via header:
 X-API-KEY: <api-key>
 ```
 
-**Default key (NIM):**
+Default key (NIM):
 ```
 102022400084
 ```
 
-**Generate key baru:**
+Generate key baru:
 ```bash
 php artisan apikey:generate
 ```
@@ -92,8 +80,6 @@ Tambahkan hasil generate ke `.env`:
 ```env
 API_KEY=hasil_generate_di_sini
 ```
-
----
 
 ## Menjalankan dengan Docker
 
@@ -107,7 +93,5 @@ docker compose up -d
 docker compose down
 ```
 
----
-
-**Muhammad Fadhlan — 102022400084**  
+**Muhammad Fadhlan — 102022400084**
 Sistem Informasi · Fakultas Rekayasa Industri · Telkom University
