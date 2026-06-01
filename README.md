@@ -1,13 +1,13 @@
-# E-Healthcare — Service Melakukan Rawat Jalan
+# E-Healthcare: Service Melakukan Rawat Jalan
 
-Bagian dari ekosistem **E-Healthcare**, service ini menangani seluruh alur proses bisnis rawat jalan — mulai dari pasien datang, konsultasi dengan dokter, hingga pengambilan obat di farmasi. Dibangun di atas Laravel dengan REST API dan GraphQL sebagai protokol komunikasi antar service.
+Bagian dari ekosistem **E-Healthcare**, service ini menangani seluruh alur proses bisnis rawat jalan mulai dari pasien datang, konsultasi dengan dokter, hingga pengambilan obat di farmasi. Dibangun di atas Laravel dengan REST API dan GraphQL sebagai protokol komunikasi antar service.
 
 ## Fitur
 
-- **REST API** — Endpoint terstruktur untuk 3 service: Data Pasien, Jadwal Dokter, dan Farmasi & Obat
-- **GraphQL** — Query fleksibel dengan Lighthouse, cocok untuk integrasi lintas service
-- **Swagger UI** — Dokumentasi API interaktif, lengkap dengan autentikasi API Key
-- **GraphiQL** — Playground untuk eksplorasi skema GraphQL secara langsung
+- **REST API**: Endpoint terstruktur untuk 3 service: Data Pasien, Jadwal Dokter, dan Farmasi & Obat
+- **GraphQL**: Query fleksibel dengan Lighthouse, cocok untuk integrasi lintas service
+- **Swagger UI**: Dokumentasi API interaktif, lengkap dengan autentikasi API Key
+- **GraphiQL**: Playground untuk eksplorasi skema GraphQL secara langsung
 
 ## Stack
 
@@ -93,5 +93,5 @@ docker compose up -d
 docker compose down
 ```
 
-**Muhammad Fadhlan — 102022400084**
+**Muhammad Fadhlan - 102022400084**
 Sistem Informasi · Fakultas Rekayasa Industri · Telkom University
