@@ -1,12 +1,12 @@
-# E-Healthcare: Service Melakukan Rawat Jalan
+# E-Healthcare: Service Farmasi & Obat
 
-Bagian dari ekosistem **E-Healthcare**, service ini menangani seluruh alur proses bisnis rawat jalan mulai dari pasien datang, konsultasi dengan dokter, hingga pengambilan obat di farmasi. Dibangun di atas Laravel dengan REST API dan GraphQL sebagai protokol komunikasi antar service.
+Bagian dari ekosistem **E-Healthcare**, service ini menangani pengelolaan resep digital dan distribusi obat dalam alur proses bisnis rawat jalan. Dibangun di atas Laravel dengan REST API dan GraphQL sebagai protokol komunikasi antar service.
 
 ## Fitur
 
-- **REST API**: Endpoint terstruktur untuk 3 service: Data Pasien, Jadwal Dokter, dan Farmasi & Obat
+- **REST API**: Endpoint terstruktur untuk manajemen resep dan obat
 - **GraphQL**: Query fleksibel dengan Lighthouse, cocok untuk integrasi lintas service
-- **Swagger UI**: Dokumentasi API interaktif, lengkap dengan autentikasi API Key
+- **Swagger UI**: Dokumentasi API interaktif dengan autentikasi API Key
 - **GraphiQL**: Playground untuk eksplorasi skema GraphQL secara langsung
 
 ## Stack
@@ -58,9 +58,19 @@ Aplikasi akan berjalan di `http://localhost:8000`
 | GraphiQL Playground | http://localhost:8000/graphiql |
 | GraphQL Endpoint | http://localhost:8000/graphql |
 
+## Endpoint API
+
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| GET | `/api/v1/pharmacy` | Ambil semua data resep |
+| POST | `/api/v1/pharmacy` | Tambah resep digital baru |
+| GET | `/api/v1/pharmacy/{id}` | Detail resep |
+| PUT | `/api/v1/pharmacy/{id}` | Update status resep |
+| DELETE | `/api/v1/pharmacy/{id}` | Hapus resep |
+
 ## Autentikasi
 
-Semua endpoint REST memerlukan API Key yang dikirim via header:
+Semua endpoint memerlukan API Key via header:
 
 ```
 X-API-KEY: <api-key>
@@ -76,7 +86,7 @@ Generate key baru:
 php artisan apikey:generate
 ```
 
-Tambahkan hasil generate ke `.env`:
+Tambahkan ke `.env`:
 ```env
 API_KEY=hasil_generate_di_sini
 ```
@@ -84,12 +94,10 @@ API_KEY=hasil_generate_di_sini
 ## Menjalankan dengan Docker
 
 ```bash
-# Jalankan semua service
 docker compose up -d
 
 # Akses di http://localhost:8000
 
-# Matikan container
 docker compose down
 ```
 
