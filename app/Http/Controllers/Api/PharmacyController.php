@@ -1,38 +1,47 @@
 <?php
-
+ 
 namespace App\Http\Controllers\Api;
-
+ 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePharmacyRequest;
 use App\Http\Resources\PharmacyResource;
 use App\Models\Pharmacy;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
-
-// ── Schema: PharmacyResource ─────────────────────────────────────────────────
+ 
+#[OA\OpenApi(
+    info: new OA\Info(
+        version: '1.0.0',
+        title: 'E-Healthcare Farmasi & Obat API',
+        description: 'API Service untuk Service Farmasi & Obat dalam ekosistem E-Healthcare Telkom University',
+    ),
+    servers: [new OA\Server(url: 'http://localhost:8000')],
+)]
+#[OA\SecurityScheme(
+    securityScheme: 'apiKeyAuth',
+    type: 'apiKey',
+    in: 'header',
+    name: 'X-API-KEY',
+)]
 #[OA\Schema(
     schema: 'PharmacyResource',
     properties: [
         new OA\Property(property: 'id', type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440002'),
-        new OA\Property(property: 'patient_id', type: 'string', format: 'uuid'),
-        new OA\Property(property: 'appointment_id', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'patient_id', type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440000'),
+        new OA\Property(property: 'appointment_id', type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440001'),
         new OA\Property(property: 'medicine_name', type: 'string', example: 'Paracetamol 500mg'),
         new OA\Property(property: 'dosage', type: 'string', example: '500mg'),
         new OA\Property(property: 'frequency', type: 'string', example: '3x sehari'),
         new OA\Property(property: 'quantity', type: 'integer', example: 10),
         new OA\Property(property: 'instructions', type: 'string', example: 'Diminum setelah makan'),
         new OA\Property(property: 'status', type: 'string', enum: ['PENDING', 'PREPARING', 'READY_TO_PICKUP', 'DISPENSED'], example: 'PENDING'),
-        new OA\Property(property: 'patient', ref: '#/components/schemas/PatientResource'),
-        new OA\Property(property: 'appointment', ref: '#/components/schemas/AppointmentResource'),
         new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
         new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
     ]
 )]
-
-// ── Schema: PharmacyRequest ──────────────────────────────────────────────────
 #[OA\Schema(
     schema: 'PharmacyRequest',
-    required: ['patient_id', 'appointment_id', 'medicine_name', 'dosage', 'frequency', 'quantity'],
+    required: ['medicine_name', 'dosage', 'frequency', 'quantity'],
     properties: [
         new OA\Property(property: 'patient_id', type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440000'),
         new OA\Property(property: 'appointment_id', type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440001'),
@@ -44,7 +53,6 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'status', type: 'string', enum: ['PENDING', 'PREPARING', 'READY_TO_PICKUP', 'DISPENSED'], example: 'PENDING'),
     ]
 )]
-
 #[OA\Tag(name: 'Pharmacy', description: 'Service Farmasi & Obat - Manajemen resep digital dan distribusi obat')]
 class PharmacyController extends Controller
 {
@@ -60,15 +68,15 @@ class PharmacyController extends Controller
     )]
     public function index(): JsonResponse
     {
-        $pharmacy = Pharmacy::with(['patient', 'appointment'])->orderByDesc('created_at')->get();
-
+        $pharmacy = Pharmacy::orderByDesc('created_at')->get();
+ 
         return $this->successResponse(
             PharmacyResource::collection($pharmacy),
             'Data resep dan obat berhasil diambil',
             $this->apiMeta()
         );
     }
-
+ 
     #[OA\Post(
         path: '/api/v1/pharmacy',
         summary: 'Tambah resep obat digital baru',
@@ -87,14 +95,14 @@ class PharmacyController extends Controller
     public function store(StorePharmacyRequest $request): JsonResponse
     {
         $pharmacy = Pharmacy::create($request->validated());
-
+ 
         return $this->successResponse(
-            new PharmacyResource($pharmacy->load(['patient', 'appointment'])),
+            new PharmacyResource($pharmacy),
             'Resep obat berhasil dicatat',
             $this->apiMeta()
         );
     }
-
+ 
     #[OA\Get(
         path: '/api/v1/pharmacy/{id}',
         summary: 'Ambil detail resep berdasarkan ID',
@@ -117,12 +125,12 @@ class PharmacyController extends Controller
     public function show(Pharmacy $pharmacy): JsonResponse
     {
         return $this->successResponse(
-            new PharmacyResource($pharmacy->load(['patient', 'appointment'])),
+            new PharmacyResource($pharmacy),
             'Data resep ditemukan',
             $this->apiMeta()
         );
     }
-
+ 
     #[OA\Put(
         path: '/api/v1/pharmacy/{id}',
         summary: 'Update data resep',
@@ -146,14 +154,14 @@ class PharmacyController extends Controller
         if (! $pharmacy->update($request->validated())) {
             return $this->errorResponse('Gagal memperbarui data resep', 500, null, $this->apiMeta());
         }
-
+ 
         return $this->successResponse(
-            new PharmacyResource($pharmacy->load(['patient', 'appointment'])),
+            new PharmacyResource($pharmacy),
             'Data resep berhasil diperbarui',
             $this->apiMeta()
         );
     }
-
+ 
     #[OA\Delete(
         path: '/api/v1/pharmacy/{id}',
         summary: 'Hapus data resep',
@@ -173,18 +181,18 @@ class PharmacyController extends Controller
         if (! $pharmacy->delete()) {
             return $this->errorResponse('Gagal menghapus data resep', 500, null, $this->apiMeta());
         }
-
+ 
         return $this->successResponse(
             new PharmacyResource($pharmacy),
             'Data resep berhasil dihapus',
             $this->apiMeta()
         );
     }
-
+ 
     private function apiMeta(): array
     {
         return [
-            'service_name' => 'E-Healthcare-Rawat-Jalan',
+            'service_name' => 'E-Healthcare-Farmasi-dan-Obat',
             'api_version' => 'v1',
         ];
     }
