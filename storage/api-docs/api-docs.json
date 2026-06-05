@@ -296,7 +296,7 @@
         "securitySchemes": {
             "apiKeyAuth": {
                 "type": "apiKey",
-                "name": "X-API-KEY",
+                "name": "X-IAE-KEY",
                 "in": "header"
             }
         }

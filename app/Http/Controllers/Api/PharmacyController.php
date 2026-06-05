@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
     securityScheme: 'apiKeyAuth',
     type: 'apiKey',
     in: 'header',
-    name: 'X-API-KEY',
+    name: 'X-IAE-KEY',
 )]
 #[OA\Schema(
     schema: 'PharmacyResource',
