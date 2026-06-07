@@ -15,7 +15,7 @@ use OpenApi\Attributes as OA;
         title: 'E-Healthcare Farmasi & Obat API',
         description: 'API Service untuk Service Farmasi & Obat dalam ekosistem E-Healthcare Telkom University',
     ),
-    servers: [new OA\Server(url: 'http://localhost:8000')],
+    servers: [new OA\Server(url: 'http://127.0.0.1:8000')],
 )]
 #[OA\SecurityScheme(
     securityScheme: 'apiKeyAuth',

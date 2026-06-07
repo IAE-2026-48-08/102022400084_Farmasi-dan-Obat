@@ -34,7 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => $message,
                     'errors' => $e->getMessage(),
                     'meta' => [
-                        'service_name' => 'Rent-Contract-Service',
+                        'service_name' => 'E-Healthcare-Farmasi-dan-Obat',
                         'api_version' => 'v1',
                     ],
                 ], 404);

@@ -1,17 +1,15 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     public function up(): void
     {
         Schema::create('pharmacy', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('patient_id')->constrained('patients')->onDelete('cascade');
-            $table->foreignUuid('appointment_id')->constrained('appointments')->onDelete('cascade');
+            $table->string('patient_id')->nullable();
+            $table->string('appointment_id')->nullable();
             $table->string('medicine_name');
             $table->string('dosage');
             $table->string('frequency');
@@ -21,7 +19,6 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-
     public function down(): void
     {
         Schema::dropIfExists('pharmacy');
