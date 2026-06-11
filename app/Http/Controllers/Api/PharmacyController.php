@@ -1,14 +1,17 @@
 <?php
- 
+
 namespace App\Http\Controllers\Api;
- 
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePharmacyRequest;
 use App\Http\Resources\PharmacyResource;
 use App\Models\Pharmacy;
+use App\Services\RabbitMqService;
+use App\Services\SoapAuditService;
+use App\Services\SsoService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
- 
+
 #[OA\OpenApi(
     info: new OA\Info(
         version: '1.0.0',
@@ -56,6 +59,12 @@ use OpenApi\Attributes as OA;
 #[OA\Tag(name: 'Pharmacy', description: 'Service Farmasi & Obat - Manajemen resep digital dan distribusi obat')]
 class PharmacyController extends Controller
 {
+    public function __construct(
+        private SsoService $ssoService,
+        private SoapAuditService $soapAuditService,
+        private RabbitMqService $rabbitMqService,
+    ) {}
+
     #[OA\Get(
         path: '/api/v1/pharmacy',
         summary: 'Ambil semua data resep dan obat',
@@ -69,14 +78,14 @@ class PharmacyController extends Controller
     public function index(): JsonResponse
     {
         $pharmacy = Pharmacy::orderByDesc('created_at')->get();
- 
+
         return $this->successResponse(
             PharmacyResource::collection($pharmacy),
             'Data resep dan obat berhasil diambil',
             $this->apiMeta()
         );
     }
- 
+
     #[OA\Post(
         path: '/api/v1/pharmacy',
         summary: 'Tambah resep obat digital baru',
@@ -94,15 +103,60 @@ class PharmacyController extends Controller
     )]
     public function store(StorePharmacyRequest $request): JsonResponse
     {
+        // Simpan resep ke database
         $pharmacy = Pharmacy::create($request->validated());
- 
+
+        // === INTEGRASI CLOUD DOSEN ===
+        // Step 1: Login SSO M2M untuk dapat JWT
+        $token = $this->ssoService->loginM2M();
+
+        $integrationResult = [
+            'sso'      => $token ? 'success' : 'failed',
+            'soap'     => null,
+            'rabbitmq' => null,
+        ];
+
+        if ($token) {
+            // Step 2: Kirim SOAP Audit (transaksi kritis: resep baru dibuat)
+            $soapResult = $this->soapAuditService->sendAudit(
+                $token,
+                'PrescriptionCreated',
+                [
+                    'prescription_id' => $pharmacy->id,
+                    'medicine_name'   => $pharmacy->medicine_name,
+                    'dosage'          => $pharmacy->dosage,
+                    'quantity'        => $pharmacy->quantity,
+                    'status'          => $pharmacy->status,
+                    'created_at'      => $pharmacy->created_at,
+                ]
+            );
+
+            $integrationResult['soap'] = $soapResult['success'] ? 'success' : 'failed';
+            if (isset($soapResult['receipt_number'])) {
+                $integrationResult['soap_receipt'] = $soapResult['receipt_number'];
+            }
+
+            // Step 3: Publish event ke RabbitMQ
+            $mqResult = $this->rabbitMqService->publishEvent(
+                'pharmacy.prescription.created',
+                [
+                    'prescription_id' => $pharmacy->id,
+                    'medicine_name'   => $pharmacy->medicine_name,
+                    'status'          => $pharmacy->status,
+                    'team_id'         => 'TEAM-13',
+                ]
+            );
+
+            $integrationResult['rabbitmq'] = $mqResult['success'] ? 'success' : 'failed';
+        }
+
         return $this->successResponse(
             new PharmacyResource($pharmacy),
             'Resep obat berhasil dicatat',
-            $this->apiMeta()
+            array_merge($this->apiMeta(), ['integration' => $integrationResult])
         );
     }
- 
+
     #[OA\Get(
         path: '/api/v1/pharmacy/{id}',
         summary: 'Ambil detail resep berdasarkan ID',
@@ -130,7 +184,7 @@ class PharmacyController extends Controller
             $this->apiMeta()
         );
     }
- 
+
     #[OA\Put(
         path: '/api/v1/pharmacy/{id}',
         summary: 'Update data resep',
@@ -154,14 +208,14 @@ class PharmacyController extends Controller
         if (! $pharmacy->update($request->validated())) {
             return $this->errorResponse('Gagal memperbarui data resep', 500, null, $this->apiMeta());
         }
- 
+
         return $this->successResponse(
             new PharmacyResource($pharmacy),
             'Data resep berhasil diperbarui',
             $this->apiMeta()
         );
     }
- 
+
     #[OA\Delete(
         path: '/api/v1/pharmacy/{id}',
         summary: 'Hapus data resep',
@@ -181,19 +235,19 @@ class PharmacyController extends Controller
         if (! $pharmacy->delete()) {
             return $this->errorResponse('Gagal menghapus data resep', 500, null, $this->apiMeta());
         }
- 
+
         return $this->successResponse(
             new PharmacyResource($pharmacy),
             'Data resep berhasil dihapus',
             $this->apiMeta()
         );
     }
- 
+
     private function apiMeta(): array
     {
         return [
             'service_name' => 'E-Healthcare-Farmasi-dan-Obat',
-            'api_version' => 'v1',
+            'api_version'  => 'v1',
         ];
     }
 }

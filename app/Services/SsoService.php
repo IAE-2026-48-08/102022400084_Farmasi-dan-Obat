@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+class SsoService
+{
+    private string $baseUrl = 'https://iae-sso.virtualfri.id';
+    private string $apiKey = 'KEY-MHS-157';
+
+    /**
+     * Login ke SSO dosen menggunakan M2M API Key
+     * Mengembalikan JWT token atau null jika gagal
+     */
+    public function loginM2M(): ?string
+    {
+        try {
+            $response = Http::post("{$this->baseUrl}/api/v1/auth/token", [
+                'api_key' => $this->apiKey,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                Log::info('[SSO] Login M2M berhasil', ['response' => $data]);
+                return $data['token'] ?? $data['access_token'] ?? null;
+            }
+
+            Log::error('[SSO] Login M2M gagal', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('[SSO] Exception saat login M2M', ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    /**
+     * Health check SSO
+     */
+    public function healthCheck(): bool
+    {
+        try {
+            $response = Http::get("{$this->baseUrl}/health");
+            return $response->successful();
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+}
