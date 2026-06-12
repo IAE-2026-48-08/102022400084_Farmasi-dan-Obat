@@ -142,9 +142,17 @@ class PharmacyController extends Controller
                 'pharmacy.prescription.created',
                 [
                     'prescription_id' => $pharmacy->id,
+                    'patient_id'      => $pharmacy->patient_id,
+                    'appointment_id'  => $pharmacy->appointment_id,
                     'medicine_name'   => $pharmacy->medicine_name,
+                    'dosage'          => $pharmacy->dosage,
+                    'frequency'       => $pharmacy->frequency,
+                    'quantity'        => $pharmacy->quantity,
+                    'instructions'    => $pharmacy->instructions,
                     'status'          => $pharmacy->status,
+                    'service'         => 'E-Healthcare-Farmasi-dan-Obat',
                     'team_id'         => 'TEAM-13',
+                    'created_at'      => $pharmacy->created_at,
                 ]
             );
 

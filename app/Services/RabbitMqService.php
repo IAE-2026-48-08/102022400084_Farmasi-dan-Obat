@@ -10,10 +10,6 @@ class RabbitMqService
     private string $baseUrl  = 'https://iae-sso.virtualfri.id';
     private string $exchange = 'iae.central.exchange';
 
-    /**
-     * Publish event ke RabbitMQ dosen via HTTP API
-     * Menggunakan JWT token dari SSO warga
-     */
     public function publishEvent(string $token, string $eventName, array $payload): array
     {
         try {
@@ -21,19 +17,19 @@ class RabbitMqService
                 ->post("{$this->baseUrl}/api/v1/messages/publish", [
                     'exchange'    => $this->exchange,
                     'routing_key' => $eventName,
-                    'payload'     => json_encode([
+                    'payload'     => [
                         'event'     => $eventName,
                         'timestamp' => now()->toIso8601String(),
                         'service'   => 'E-Healthcare-Farmasi-dan-Obat',
                         'team_id'   => 'TEAM-13',
-                        'payload'   => $payload,
-                    ]),
+                        'data'      => $payload,
+                    ],
                 ]);
 
             Log::info('[RabbitMQ] Event published', [
-                'event'   => $eventName,
-                'status'  => $response->status(),
-                'body'    => $response->body(),
+                'event'  => $eventName,
+                'status' => $response->status(),
+                'body'   => $response->body(),
             ]);
 
             return [
