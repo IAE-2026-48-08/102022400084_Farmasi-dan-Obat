@@ -106,15 +106,15 @@ class PharmacyController extends Controller
         // Simpan resep ke database
         $pharmacy = Pharmacy::create($request->validated());
 
-        // === INTEGRASI CLOUD DOSEN ===
-        // Step 1: Login SSO M2M untuk dapat JWT
-        $token = $this->ssoService->loginM2M();
-
         $integrationResult = [
-            'sso'      => $token ? 'success' : 'failed',
+            'sso'      => null,
             'soap'     => null,
             'rabbitmq' => null,
         ];
+
+        // Step 1: Login SSO Warga untuk dapat JWT (digunakan SOAP & RabbitMQ)
+        $token = $this->ssoService->loginM2M();
+        $integrationResult['sso'] = $token ? 'success' : 'failed';
 
         if ($token) {
             // Step 2: Kirim SOAP Audit (transaksi kritis: resep baru dibuat)
@@ -138,6 +138,7 @@ class PharmacyController extends Controller
 
             // Step 3: Publish event ke RabbitMQ
             $mqResult = $this->rabbitMqService->publishEvent(
+                $token,
                 'pharmacy.prescription.created',
                 [
                     'prescription_id' => $pharmacy->id,
