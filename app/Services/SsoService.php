@@ -19,7 +19,7 @@ class SsoService
     {
         try {
             $response = Http::post("{$this->baseUrl}/api/v1/auth/token", [
-                'api_key' => $this->apiKey,
+                'api_key' => $this->apiKey, 'nim' => '102022400084',
             ]);
 
             if ($response->successful()) {
