@@ -1,6 +1,6 @@
 # E-Healthcare: Service Farmasi & Obat
 
-Bagian dari ekosistem **E-Healthcare**, service ini menangani pengelolaan resep digital dan distribusi obat dalam alur proses bisnis rawat jalan. Dibangun di atas Laravel dengan REST API dan GraphQL sebagai protokol komunikasi antar service.
+Bagian dari ekosistem E-Healthcare, service ini menangani pengelolaan resep digital dan distribusi obat dalam alur proses bisnis rawat jalan. Dibangun di atas Laravel dengan REST API dan GraphQL sebagai protokol komunikasi antar service.
 
 ## Fitur
 
@@ -11,12 +11,12 @@ Bagian dari ekosistem **E-Healthcare**, service ini menangani pengelolaan resep 
 
 ## Stack
 
-| | |
+| Komponen | Teknologi |
 |---|---|
-| Framework | [Laravel](https://laravel.com/) |
-| REST Docs | [L5 Swagger](https://github.com/DarkaOnLine/L5-Swagger) + [swagger-php](https://github.com/zircote/swagger-php) |
-| GraphQL Server | [Lighthouse](https://lighthouse-php.com/) |
-| GraphQL UI | [Laravel GraphiQL](https://github.com/mll-lab/laravel-graphiql) |
+| Framework | Laravel |
+| REST Docs | L5 Swagger + swagger-php |
+| GraphQL Server | Lighthouse |
+| GraphQL UI | Laravel GraphiQL |
 | Database | SQLite |
 
 ## Prasyarat
@@ -24,10 +24,11 @@ Bagian dari ekosistem **E-Healthcare**, service ini menangani pengelolaan resep 
 - PHP >= 8.3
 - Composer
 - Node.js & NPM
+- Docker & Docker Desktop (opsional, untuk menjalankan via container)
 
-## Cara Menjalankan
+## Cara Menjalankan (Manual)
 
-```bash
+\`\`\`bash
 # 1. Clone repo
 git clone https://github.com/IAE-2026-48-08/102022400084_Farmasi-dan-Obat.git
 cd 102022400084_Farmasi-dan-Obat
@@ -45,9 +46,17 @@ php artisan migrate
 
 # 5. Jalankan server
 composer run dev
-```
+\`\`\`
 
 Aplikasi akan berjalan di `http://localhost:8000`
+
+## Cara Menjalankan (Docker)
+
+\`\`\`bash
+docker compose up -d --build
+# Akses di http://localhost:8000
+docker compose down
+\`\`\`
 
 ## Akses Layanan
 
@@ -61,45 +70,40 @@ Aplikasi akan berjalan di `http://localhost:8000`
 ## Endpoint API
 
 | Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| GET | `/api/v1/pharmacy` | Ambil semua data resep |
-| POST | `/api/v1/pharmacy` | Tambah resep digital baru |
-| GET | `/api/v1/pharmacy/{id}` | Detail resep |
-| PUT | `/api/v1/pharmacy/{id}` | Update status resep |
-| DELETE | `/api/v1/pharmacy/{id}` | Hapus resep |
+|---|---|---|
+| GET | /api/v1/pharmacy | Ambil semua data resep |
+| POST | /api/v1/pharmacy | Tambah resep digital baru |
+| GET | /api/v1/pharmacy/{id} | Detail resep |
+| PUT | /api/v1/pharmacy/{id} | Update status resep |
+| DELETE | /api/v1/pharmacy/{id} | Hapus resep |
 
 ## Autentikasi
 
-Semua endpoint memerlukan API Key via header:
+Semua endpoint memerlukan API Key via header (sesuai Standard Integration Contract IAE-T2):
 
-```
-X-API-KEY: <api-key>
-```
+\`\`\`
+X-IAE-KEY: <api-key>
+\`\`\`
 
 Default key (NIM):
-```
+
+\`\`\`
 102022400084
-```
+\`\`\`
 
 Generate key baru:
-```bash
+
+\`\`\`bash
 php artisan apikey:generate
-```
+\`\`\`
 
 Tambahkan ke `.env`:
-```env
+
+\`\`\`
 API_KEY=hasil_generate_di_sini
-```
+\`\`\`
 
-## Menjalankan dengan Docker
+---
 
-```bash
-docker compose up -d
-
-# Akses di http://localhost:8000
-
-docker compose down
-```
-
-**Muhammad Fadhlan - 102022400084**
+**Muhammad Fadhlan** - 102022400084
 Sistem Informasi · Fakultas Rekayasa Industri · Telkom University
