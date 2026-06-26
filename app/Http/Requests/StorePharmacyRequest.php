@@ -9,6 +9,8 @@ class StorePharmacyRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'patient_id'     => 'nullable|string|max:36',
+            'appointment_id' => 'nullable|string|max:36',
             'medicine_name'  => 'required|string|max:255',
             'dosage'         => 'required|string|max:100',
             'frequency'      => 'required|string|max:100',
@@ -18,20 +20,12 @@ class StorePharmacyRequest extends FormRequest
         ];
     }
 
-    /**
-     * Pastikan response validasi gagal selalu JSON sesuai Standard Integration Contract,
-     * terlepas dari header Accept yang dikirim client (mencegah redirect 302 default Laravel).
-     */
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([
             'status'  => 'error',
             'message' => 'Validasi gagal',
-            'errors'  => $validator->errors(),
-            'meta'    => [
-                'service_name' => 'E-Healthcare-Farmasi-dan-Obat',
-                'api_version'  => 'v1',
-            ],
+            'errors'  => $validator->errors()
         ], 422));
     }
 }

@@ -7,4 +7,6 @@ type Query
 
 type Mutation
 
-#import models/pharmacy.graphql
+#import patient.graphql
+#import appointment.graphql
+#import pharmacy.graphql
