@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: 102022400056_RENT-CONTRACT
+    container_name: 102022400084_Farmasi-dan-Obat
     restart: unless-stopped
     working_dir: /var/www
     command: php artisan serve --host=0.0.0.0 --port=8000
