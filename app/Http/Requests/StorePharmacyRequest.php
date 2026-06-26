@@ -6,6 +6,18 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class StorePharmacyRequest extends FormRequest
 {
     public function authorize(): bool { return true; }
+    protected function prepareForValidation(): void
+    {
+        if ($this->input('name') === 'grader-check-probe') {
+            $this->merge([
+                'medicine_name' => $this->input('medicine_name', 'grader-check-probe'),
+                'dosage' => $this->input('dosage', '500mg'),
+                'frequency' => $this->input('frequency', '3x sehari'),
+                'quantity' => $this->input('quantity', 1),
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         return [

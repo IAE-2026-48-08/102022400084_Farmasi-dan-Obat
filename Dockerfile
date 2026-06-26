@@ -1,12 +1,10 @@
 FROM php:8.4-cli
 
-RUN apt-get update && apt-get install -y \
-    git curl zip unzip libzip-dev libpng-dev \
-    libonig-dev libxml2-dev libicu-dev nodejs npm \
-    && docker-php-ext-install \
-    pdo pdo_mysql mbstring zip gd intl bcmath sockets \
-    && pecl install redis && docker-php-ext-enable redis \
-    && apt-get clean
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN apt-get update && apt-get install -y git curl zip unzip nodejs npm && apt-get clean
+
+RUN install-php-extensions pdo pdo_mysql mbstring zip gd intl bcmath sockets redis
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
