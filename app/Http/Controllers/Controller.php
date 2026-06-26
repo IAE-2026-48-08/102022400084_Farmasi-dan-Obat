@@ -9,19 +9,18 @@ abstract class Controller
     /**
      * Build a standardized successful API response.
      */
-    protected function successResponse(mixed $data, string $message = 'Request successful', array $meta = []): JsonResponse
-    {
-        if (is_object($data) && method_exists($data, 'resolve')) {
-            $data = $data->resolve();
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => $message,
-            'data' => $data,
-            'meta' => $meta,
-        ]);
+    protected function successResponse(mixed $data, string $message = 'Request successful', array $meta = [], int $status = 200): 	JsonResponse
+{
+    if (is_object($data) && method_exists($data, 'resolve')) {
+        $data = $data->resolve();
     }
+    return response()->json([
+        'status' => 'success',
+        'message' => $message,
+        'data' => $data,
+        'meta' => $meta,
+    ], $status);
+}
 
     /**
      * Build a standardized error API response.

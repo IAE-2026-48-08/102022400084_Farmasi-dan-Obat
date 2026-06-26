@@ -162,7 +162,8 @@ class PharmacyController extends Controller
         return $this->successResponse(
             new PharmacyResource($pharmacy),
             'Resep obat berhasil dicatat',
-            array_merge($this->apiMeta(), ['integration' => $integrationResult])
+            array_merge($this->apiMeta(), ['integration' => $integrationResult]),
+            201
         );
     }
 
