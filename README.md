@@ -28,7 +28,7 @@ Bagian dari ekosistem E-Healthcare, service ini menangani pengelolaan resep digi
 
 ## Cara Menjalankan (Manual)
 
-\`\`\`bash
+```bash
 # 1. Clone repo
 git clone https://github.com/IAE-2026-48-08/102022400084_Farmasi-dan-Obat.git
 cd 102022400084_Farmasi-dan-Obat
@@ -46,17 +46,17 @@ php artisan migrate
 
 # 5. Jalankan server
 composer run dev
-\`\`\`
+```
 
 Aplikasi akan berjalan di `http://localhost:8000`
 
 ## Cara Menjalankan (Docker)
 
-\`\`\`bash
+```bash
 docker compose up -d --build
 # Akses di http://localhost:8000
 docker compose down
-\`\`\`
+```
 
 ## Akses Layanan
 
@@ -81,27 +81,27 @@ docker compose down
 
 Semua endpoint memerlukan API Key via header (sesuai Standard Integration Contract IAE-T2):
 
-\`\`\`
+```
 X-IAE-KEY: <api-key>
-\`\`\`
+```
 
 Default key (NIM):
 
-\`\`\`
+```
 102022400084
-\`\`\`
+```
 
 Generate key baru:
 
-\`\`\`bash
+```bash
 php artisan apikey:generate
-\`\`\`
+```
 
 Tambahkan ke `.env`:
 
-\`\`\`
+```
 API_KEY=hasil_generate_di_sini
-\`\`\`
+```
 
 ---
 
